@@ -1,0 +1,191 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.29.30159.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "commandLine": "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX86\\x86\\c1xx.dll\" -ACf{1F7B090C-16DB-4822-966A-A93D26ED4681} -ACpmspft140.dll -Alint -D_PREFAST_ -D_AST_FE_ -Analyze -zm0x00E6D1C0 -il C:\\WINDOWS\\TEMP\\2\\_CL_fdfdbeeaast -typedil -f event.cpp -Ze -D_MSC_EXTENSIONS -Zp8 -Gs -pc \\:/ -D_MSC_VER=1929 -D_MSC_FULL_VER=192930159 -D_MSC_BUILD=0 -D_WIN32 -D_M_IX86=600 -D_M_IX86_FP=2 -GR -D_CPPRTTI -nologo -W 3 -diagnostics:column -Og -Oi -Ot -DCODE_ANALYSIS -DWIN32 -DNDEBUG -D_CONSOLE -D_VC80_UPGRADE=0x0600 -D_UNICODE -DUNICODE -GF -EHs -D_CPPUNWIND -EHc -MT -clrNoPureCRT -D_MT -GS -D_M_FP_PRECISE -Zc:wchar_t -Zc:forScope -Fotmp\\Release\\win32\\event.obj -Fdtmp\\Release\\win32\\vc142.pdb -external:W 3 -Gd -analyze:projectdirectory D:\\Developer\\nssm\\nssm -analyze:rulesetdirectory ;C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Team Tools\\Static Analysis Tools\\\\Rule Sets; -analyze:ruleset C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Team Tools\\Static Analysis Tools\\Rule Sets\\MinimumRecommendedRules.ruleset -analyze:quiet -analyze:plugin C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX86\\x86\\EspXEngine.dll -FC -errorreport:prompt -I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\include -I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\atlmfc\\include -I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\VS\\include -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt -I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\VS\\UnitTest\\include -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\winrt -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\cppwinrt -I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.6.1\\Include\\um -external:I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\include -I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\include -external:I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\atlmfc\\include -I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\atlmfc\\include -external:I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\VS\\include -I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\VS\\include -external:I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\ucrt -external:I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\VS\\UnitTest\\include -I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\VS\\UnitTest\\include -external:I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um -external:I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\shared -external:I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\winrt -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\winrt -external:I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\cppwinrt -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\cppwinrt -external:I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.6.1\\Include\\um -I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.6.1\\Include\\um",
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/utf8.cpp"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "md5": "06ca6603d177e909ea0e5103a27fe6f5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/nssm.h"
+          },
+          "hashes": {
+            "md5": "804a4b4d37239b5bcc4404135abd20b4"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/bigsam.h"
+          },
+          "hashes": {
+            "md5": "781a629454720e21ce93ec7a959d6856"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/utf8.h"
+          },
+          "hashes": {
+            "md5": "5a7a7e654127b5884e2d2d06669947c4"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/service.h"
+          },
+          "hashes": {
+            "md5": "bfdd96730e90d38f662ed914b636bce8"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/account.h"
+          },
+          "hashes": {
+            "md5": "37123dbbe051afef76a91049570ab447"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/console.h"
+          },
+          "hashes": {
+            "md5": "f311f1c21fd6b6e4eb208b998340776f"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/env.h"
+          },
+          "hashes": {
+            "md5": "edce1a5c80a562be23b65e98e061ffd5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/event.h"
+          },
+          "hashes": {
+            "md5": "bd2d50fa5fbbb97285f9984e6cd1e4d4"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/hook.h"
+          },
+          "hashes": {
+            "md5": "21bfc4f70c14c0af961670596db83d18"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/imports.h"
+          },
+          "hashes": {
+            "md5": "8ae323f8f5e2abeab5c2e512272d8267"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/messages.h"
+          },
+          "hashes": {
+            "md5": "4351a31f5f7807e786b5a8e079c755fa"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/process.h"
+          },
+          "hashes": {
+            "md5": "4332aa27e806adc3cb89c1b2013b72ef"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/registry.h"
+          },
+          "hashes": {
+            "md5": "bb73bc6e34b54bad8ee42e85d83d4cc0"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/settings.h"
+          },
+          "hashes": {
+            "md5": "15c77514d36c991c1902c3b24fb39a48"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/io.h"
+          },
+          "hashes": {
+            "md5": "64b28bf793b883fe832dfccb56db79ad"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/gui.h"
+          },
+          "hashes": {
+            "md5": "a015f901e2ece542ec8da0d62a2dec91"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/resource.h"
+          },
+          "hashes": {
+            "md5": "4dc1891dafffce12c3504e6c8ec2004f"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/version.h"
+          },
+          "hashes": {
+            "md5": "e4e82e9c7e9925a6ceca0d9000c6cca4"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/developer/nssm/nssm/event.cpp"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "md5": "234f3a7591b7811c82c32d9ca393f884"
+          }
+        }
+      ]
+    }
+  ]
+}

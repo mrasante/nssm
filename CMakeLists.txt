@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.1)
+cmake_minimum_required(VERSION 3.10)
 project(nssm)
 
 if(NOT WIN32)
@@ -7,9 +7,7 @@ endif()
 
 set(CMAKE_CXX_STANDARD 14)
 
-include_directories(.)
-
-add_executable(nssm
+add_executable(bigsam
         account.cpp
         account.h
         bigsam.cpp
@@ -39,3 +37,5 @@ add_executable(nssm
         settings.h
         utf8.cpp
         utf8.h)
+
+target_link_libraries(bigsam shlwapi psapi)

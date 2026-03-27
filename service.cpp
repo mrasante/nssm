@@ -1,4 +1,4 @@
-#include "nssm.h"
+#include "bigsam.h"
 
 bool is_admin;
 bool use_critical_section;
@@ -1578,7 +1578,7 @@ void WINAPI service_main(unsigned long argc, TCHAR **argv) {
   service->pid = 0;
 
   /* Register control handler */
-  service->status_handle = RegisterServiceCtrlHandlerEx(NSSM, service_control_handler, (void *) service);
+  service->status_handle = RegisterServiceCtrlHandlerEx(service->name, service_control_handler, (void *) service);
   if (! service->status_handle) {
     log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_REGISTERSERVICECTRLHANDER_FAILED, error_string(GetLastError()), 0);
     return;
@@ -1898,7 +1898,8 @@ int start_service(nssm_service_t *service) {
     if (si.dwFlags & STARTF_USESTDHANDLES) inherit_handles = true;
     unsigned long flags = service->priority & priority_mask();
     if (service->affinity) flags |= CREATE_SUSPENDED;
-    if (! service->no_console) flags |= CREATE_NEW_CONSOLE;
+    if (! service->no_console) flags |= CREATE_NEW_CONSOLE;
+
     if (! CreateProcess(0, cmd, 0, 0, inherit_handles, flags, 0, service->dir, &si, &pi)) {
       unsigned long exitcode = 3;
       unsigned long error = GetLastError();
