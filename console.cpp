@@ -1,4 +1,6 @@
 #include "nssm.h"
+#include "bigsam.h"
+#include "messages.h"
 
 /* See if we were launched from a console window. */
 bool check_console() {

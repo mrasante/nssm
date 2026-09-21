@@ -1,6 +1,10 @@
 #ifndef NSSM_H
 #define NSSM_H
 
+#ifndef _WIN32
+#error "bigsam is a Windows-only project. Build it with a Windows toolchain and Windows SDK."
+#endif
+
 /*
   MSDN says, basically, that the maximum length of a path is 260 characters,
   which is represented by the constant MAX_PATH.  Except when it isn't.
@@ -63,18 +67,18 @@
 #endif
 
 void nssm_exit(int);
-int str_equiv(const TCHAR *, const TCHAR *);
-int quote(const TCHAR *, TCHAR *, size_t);
-void strip_basename(TCHAR *);
-int str_number(const TCHAR *, unsigned long *, TCHAR **);
-int str_number(const TCHAR *, unsigned long *);
+int str_equiv(const TCHAR*, const TCHAR*);
+int quote(const TCHAR*, TCHAR*, size_t);
+void strip_basename(TCHAR*);
+int str_number(const TCHAR*, unsigned long*, TCHAR**);
+int str_number(const TCHAR*, unsigned long*);
 int num_cpus();
 int usage(int);
-const TCHAR *nssm_unquoted_imagepath();
-const TCHAR *nssm_imagepath();
-const TCHAR *nssm_exe();
+const TCHAR* nssm_unquoted_imagepath();
+const TCHAR* nssm_imagepath();
+const TCHAR* nssm_exe();
 
-#define NSSM _T("NSSM")
+#define NSSM _T("BigSAM")
 #ifdef _WIN64
 #define NSSM_ARCHITECTURE _T("64-bit")
 #else

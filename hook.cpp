@@ -80,7 +80,7 @@ static void add_thread_handle(hook_thread_t *hook_threads, HANDLE thread_handle,
   int num_threads = hook_threads->num_threads + 1;
   hook_thread_data_t *data = (hook_thread_data_t *) HeapAlloc(GetProcessHeap(), 0, num_threads * sizeof(hook_thread_data_t));
   if (! data) {
-    log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_OUT_OF_MEMORY, _T("hook_thread_t"), _T("add_thread_handle()"), 0);
+    log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_OUT_OF_MEMORY, _T("hook_thread_t"), _T("add_thread_handle()"), 0);
     return;
   }
 
@@ -102,7 +102,7 @@ bool valid_hook_name(const TCHAR *hook_event, const TCHAR *hook_action, bool qui
   if (str_equiv(hook_event, NSSM_HOOK_EVENT_EXIT)) {
     if (str_equiv(hook_action, NSSM_HOOK_ACTION_POST)) return true;
     if (quiet) return false;
-    print_message(stderr, NSSM_MESSAGE_INVALID_HOOK_ACTION, hook_event);
+    print_message(stderr, BIGSAM_MESSAGE_INVALID_HOOK_ACTION, hook_event);
     _ftprintf(stderr, _T("%s\n"), NSSM_HOOK_ACTION_POST);
     return false;
   }
@@ -112,7 +112,7 @@ bool valid_hook_name(const TCHAR *hook_event, const TCHAR *hook_action, bool qui
     if (str_equiv(hook_action, NSSM_HOOK_ACTION_CHANGE)) return true;
     if (str_equiv(hook_action, NSSM_HOOK_ACTION_RESUME)) return true;
     if (quiet) return false;
-    print_message(stderr, NSSM_MESSAGE_INVALID_HOOK_ACTION, hook_event);
+    print_message(stderr, BIGSAM_MESSAGE_INVALID_HOOK_ACTION, hook_event);
     _ftprintf(stderr, _T("%s\n"), NSSM_HOOK_ACTION_CHANGE);
     _ftprintf(stderr, _T("%s\n"), NSSM_HOOK_ACTION_RESUME);
     return false;
@@ -123,7 +123,7 @@ bool valid_hook_name(const TCHAR *hook_event, const TCHAR *hook_action, bool qui
     if (str_equiv(hook_action, NSSM_HOOK_ACTION_PRE)) return true;
     if (str_equiv(hook_action, NSSM_HOOK_ACTION_POST)) return true;
     if (quiet) return false;
-    print_message(stderr, NSSM_MESSAGE_INVALID_HOOK_ACTION, hook_event);
+    print_message(stderr, BIGSAM_MESSAGE_INVALID_HOOK_ACTION, hook_event);
     _ftprintf(stderr, _T("%s\n"), NSSM_HOOK_ACTION_PRE);
     _ftprintf(stderr, _T("%s\n"), NSSM_HOOK_ACTION_POST);
     return false;
@@ -134,7 +134,7 @@ bool valid_hook_name(const TCHAR *hook_event, const TCHAR *hook_action, bool qui
     if (str_equiv(hook_action, NSSM_HOOK_ACTION_PRE)) return true;
     if (str_equiv(hook_action, NSSM_HOOK_ACTION_POST)) return true;
     if (quiet) return false;
-    print_message(stderr, NSSM_MESSAGE_INVALID_HOOK_ACTION, hook_event);
+    print_message(stderr, BIGSAM_MESSAGE_INVALID_HOOK_ACTION, hook_event);
     _ftprintf(stderr, _T("%s\n"), NSSM_HOOK_ACTION_PRE);
     _ftprintf(stderr, _T("%s\n"), NSSM_HOOK_ACTION_POST);
     return false;
@@ -144,13 +144,13 @@ bool valid_hook_name(const TCHAR *hook_event, const TCHAR *hook_action, bool qui
   if (str_equiv(hook_event, NSSM_HOOK_EVENT_STOP)) {
     if (str_equiv(hook_action, NSSM_HOOK_ACTION_PRE)) return true;
     if (quiet) return false;
-    print_message(stderr, NSSM_MESSAGE_INVALID_HOOK_ACTION, hook_event);
+    print_message(stderr, BIGSAM_MESSAGE_INVALID_HOOK_ACTION, hook_event);
     _ftprintf(stderr, _T("%s\n"), NSSM_HOOK_ACTION_PRE);
     return false;
   }
 
   if (quiet) return false;
-  print_message(stderr, NSSM_MESSAGE_INVALID_HOOK_EVENT);
+  print_message(stderr, BIGSAM_MESSAGE_INVALID_HOOK_EVENT);
   _ftprintf(stderr, _T("%s\n"), NSSM_HOOK_EVENT_EXIT);
   _ftprintf(stderr, _T("%s\n"), NSSM_HOOK_EVENT_POWER);
   _ftprintf(stderr, _T("%s\n"), NSSM_HOOK_EVENT_ROTATE);
@@ -165,7 +165,7 @@ void await_hook_threads(hook_thread_t *hook_threads, SERVICE_STATUS_HANDLE statu
 
   int *retain = (int *) HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, hook_threads->num_threads * sizeof(int));
   if (! retain) {
-    log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_OUT_OF_MEMORY, _T("retain"), _T("await_hook_threads()"), 0);
+    log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_OUT_OF_MEMORY, _T("retain"), _T("await_hook_threads()"), 0);
     return;
   }
 
@@ -193,7 +193,7 @@ void await_hook_threads(hook_thread_t *hook_threads, SERVICE_STATUS_HANDLE statu
   if (num_threads) {
     hook_thread_data_t *data = (hook_thread_data_t *) HeapAlloc(GetProcessHeap(), 0, num_threads * sizeof(hook_thread_data_t));
     if (! data) {
-    log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_OUT_OF_MEMORY, _T("data"), _T("await_hook_threads()"), 0);
+    log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_OUT_OF_MEMORY, _T("data"), _T("await_hook_threads()"), 0);
       HeapFree(GetProcessHeap(), 0, retain);
       return;
     }
@@ -227,7 +227,7 @@ int nssm_hook(hook_thread_t *hook_threads, nssm_service_t *service, TCHAR *hook_
 
   hook_t *hook = (hook_t *) HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(hook_t));
   if (! hook) {
-    log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_OUT_OF_MEMORY, _T("hook"), _T("nssm_hook()"), 0);
+    log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_OUT_OF_MEMORY, _T("hook"), _T("nssm_hook()"), 0);
     return NSSM_HOOK_STATUS_ERROR;
   }
 
@@ -326,7 +326,7 @@ int nssm_hook(hook_thread_t *hook_threads, nssm_service_t *service, TCHAR *hook_
 
   TCHAR cmd[CMD_LENGTH];
   if (get_hook(service->name, hook_event, hook_action, cmd, sizeof(cmd))) {
-    log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_GET_HOOK_FAILED, hook_event, hook_action, service->name, 0);
+    log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_GET_HOOK_FAILED, hook_event, hook_action, service->name, 0);
     unset_service_environment(service);
     LeaveCriticalSection(&service->hook_section);
     HeapFree(GetProcessHeap(), 0, hook);
@@ -381,14 +381,14 @@ int nssm_hook(hook_thread_t *hook_threads, nssm_service_t *service, TCHAR *hook_
       }
     }
     else {
-      log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_CREATETHREAD_FAILED, error_string(GetLastError()), 0);
+      log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_CREATETHREAD_FAILED, error_string(GetLastError()), 0);
       await_hook(hook);
       if (hook->name) HeapFree(GetProcessHeap(), 0, hook->name);
       HeapFree(GetProcessHeap(), 0, hook);
     }
   }
   else {
-    log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_HOOK_CREATEPROCESS_FAILED, hook_event, hook_action, service->name, cmd, error_string(GetLastError()), 0);
+    log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_HOOK_CREATEPROCESS_FAILED, hook_event, hook_action, service->name, cmd, error_string(GetLastError()), 0);
     HeapFree(GetProcessHeap(), 0, hook);
     close_output_handles(&si);
   }
