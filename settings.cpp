@@ -34,13 +34,13 @@ static int value_from_string(const TCHAR *name, value_t *value, const TCHAR *str
 
   value->string = (TCHAR *) HeapAlloc(GetProcessHeap(), 0, len * sizeof(TCHAR));
   if (! value->string) {
-    print_message(stderr, NSSM_MESSAGE_OUT_OF_MEMORY, name, _T("value_from_string()"));
+    print_message(stderr, BIGSAM_MESSAGE_OUT_OF_MEMORY, name, _T("value_from_string()"));
     return -1;
   }
 
   if (_sntprintf_s(value->string, len, _TRUNCATE, _T("%s"), string) < 0) {
     HeapFree(GetProcessHeap(), 0, value->string);
-    print_message(stderr, NSSM_MESSAGE_OUT_OF_MEMORY, name, _T("value_from_string()"));
+    print_message(stderr, BIGSAM_MESSAGE_OUT_OF_MEMORY, name, _T("value_from_string()"));
     return -1;
   }
 
@@ -59,7 +59,7 @@ static int setting_set_number(const TCHAR *service_name, void *param, const TCHA
   if (! value || ! value->string) {
     error = RegDeleteValue(key, name);
     if (error == ERROR_SUCCESS || error == ERROR_FILE_NOT_FOUND) return 0;
-    print_message(stderr, NSSM_MESSAGE_REGDELETEVALUE_FAILED, name, service_name, error_string(error));
+    print_message(stderr, BIGSAM_MESSAGE_REGDELETEVALUE_FAILED, name, service_name, error_string(error));
     return -1;
   }
   if (str_number(value->string, &number)) return -1;
@@ -67,7 +67,7 @@ static int setting_set_number(const TCHAR *service_name, void *param, const TCHA
   if (default_value && number == PtrToUlong(default_value)) {
     error = RegDeleteValue(key, name);
     if (error == ERROR_SUCCESS || error == ERROR_FILE_NOT_FOUND) return 0;
-    print_message(stderr, NSSM_MESSAGE_REGDELETEVALUE_FAILED, name, service_name, error_string(error));
+    print_message(stderr, BIGSAM_MESSAGE_REGDELETEVALUE_FAILED, name, service_name, error_string(error));
     return -1;
   }
 
@@ -93,14 +93,14 @@ static int setting_set_string(const TCHAR *service_name, void *param, const TCHA
     else {
       error = RegDeleteValue(key, name);
       if (error == ERROR_SUCCESS || error == ERROR_FILE_NOT_FOUND) return 0;
-      print_message(stderr, NSSM_MESSAGE_REGDELETEVALUE_FAILED, name, service_name, error_string(error));
+      print_message(stderr, BIGSAM_MESSAGE_REGDELETEVALUE_FAILED, name, service_name, error_string(error));
       return -1;
     }
   }
   if (default_value && _tcslen((TCHAR *) default_value) && str_equiv(value->string, (TCHAR *) default_value)) {
     error = RegDeleteValue(key, name);
     if (error == ERROR_SUCCESS || error == ERROR_FILE_NOT_FOUND) return 0;
-    print_message(stderr, NSSM_MESSAGE_REGDELETEVALUE_FAILED, name, service_name, error_string(error));
+    print_message(stderr, BIGSAM_MESSAGE_REGDELETEVALUE_FAILED, name, service_name, error_string(error));
     return -1;
   }
 
@@ -182,7 +182,7 @@ static int setting_set_exit_action(const TCHAR *service_name, void *param, const
       error = RegDeleteValue(key, code);
       RegCloseKey(key);
       if (error == ERROR_SUCCESS || error == ERROR_FILE_NOT_FOUND) return 0;
-      print_message(stderr, NSSM_MESSAGE_REGDELETEVALUE_FAILED, code, service_name, error_string(error));
+      print_message(stderr, BIGSAM_MESSAGE_REGDELETEVALUE_FAILED, code, service_name, error_string(error));
       return -1;
     }
     else {
@@ -197,7 +197,7 @@ static int setting_set_exit_action(const TCHAR *service_name, void *param, const
     if (! _tcsnicmp((const TCHAR *) action_string, exit_action_strings[i], ACTION_LEN)) {
       if (default_value && str_equiv(action_string, (TCHAR *) default_value)) ret = 0;
       if (RegSetValueEx(key, code, 0, REG_SZ, (const unsigned char *) exit_action_strings[i], (unsigned long) (_tcslen(action_string) + 1) * sizeof(TCHAR)) != ERROR_SUCCESS) {
-        print_message(stderr, NSSM_MESSAGE_SETVALUE_FAILED, code, service_name, error_string(GetLastError()));
+        print_message(stderr, BIGSAM_MESSAGE_SETVALUE_FAILED, code, service_name, error_string(GetLastError()));
         RegCloseKey(key);
         return -1;
       }
@@ -207,7 +207,7 @@ static int setting_set_exit_action(const TCHAR *service_name, void *param, const
     }
   }
 
-  print_message(stderr, NSSM_MESSAGE_INVALID_EXIT_ACTION, action_string);
+  print_message(stderr, BIGSAM_MESSAGE_INVALID_EXIT_ACTION, action_string);
   for (int i = 0; exit_action_strings[i]; i++) _ftprintf(stderr, _T("%s\n"), exit_action_strings[i]);
 
   return -1;
@@ -281,7 +281,7 @@ static inline bool split_hook_name(const TCHAR *hook_name, TCHAR *hook_event, TC
     }
   }
 
-  print_message(stderr, NSSM_MESSAGE_INVALID_HOOK_NAME, hook_name);
+  print_message(stderr, BIGSAM_MESSAGE_INVALID_HOOK_NAME, hook_name);
   return false;
 }
 
@@ -354,7 +354,7 @@ static int setting_set_affinity(const TCHAR *service_name, void *param, const TC
 
     if (is_default(value->string) || str_equiv(value->string, NSSM_AFFINITY_ALL)) mask = 0LL;
     else if (affinity_string_to_mask(value->string, &mask)) {
-      print_message(stderr, NSSM_MESSAGE_BOGUS_AFFINITY_MASK, value->string, num_cpus() - 1);
+      print_message(stderr, BIGSAM_MESSAGE_BOGUS_AFFINITY_MASK, value->string, num_cpus() - 1);
       return -1;
     }
   }
@@ -363,7 +363,7 @@ static int setting_set_affinity(const TCHAR *service_name, void *param, const TC
   if (! mask) {
     error = RegDeleteValue(key, name);
     if (error == ERROR_SUCCESS || error == ERROR_FILE_NOT_FOUND) return 0;
-    print_message(stderr, NSSM_MESSAGE_REGDELETEVALUE_FAILED, name, service_name, error_string(error));
+    print_message(stderr, BIGSAM_MESSAGE_REGDELETEVALUE_FAILED, name, service_name, error_string(error));
     return -1;
   }
 
@@ -380,7 +380,7 @@ static int setting_set_affinity(const TCHAR *service_name, void *param, const TC
     if (! affinity_mask_to_string(system_affinity, &system)) {
       TCHAR *effective = 0;
       if (! affinity_mask_to_string(effective_affinity, &effective)) {
-        print_message(stderr, NSSM_MESSAGE_EFFECTIVE_AFFINITY_MASK, value->string, system, effective);
+        print_message(stderr, BIGSAM_MESSAGE_EFFECTIVE_AFFINITY_MASK, value->string, system, effective);
         HeapFree(GetProcessHeap(), 0, effective);
       }
       HeapFree(GetProcessHeap(), 0, system);
@@ -389,7 +389,7 @@ static int setting_set_affinity(const TCHAR *service_name, void *param, const TC
 
   if (RegSetValueEx(key, name, 0, REG_SZ, (const unsigned char *) canon, (unsigned long) (_tcslen(canon) + 1) * sizeof(TCHAR)) != ERROR_SUCCESS) {
     if (canon != value->string) HeapFree(GetProcessHeap(), 0, canon);
-    log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_SETVALUE_FAILED, name, error_string(GetLastError()), 0);
+    log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_SETVALUE_FAILED, name, error_string(GetLastError()), 0);
     return -1;
   }
 
@@ -416,7 +416,7 @@ static int setting_get_affinity(const TCHAR *service_name, void *param, const TC
 
   buffer = (TCHAR *) HeapAlloc(GetProcessHeap(), 0, buflen);
   if (! buffer) {
-    print_message(stderr, NSSM_MESSAGE_OUT_OF_MEMORY, _T("affinity"), _T("setting_get_affinity"));
+    print_message(stderr, BIGSAM_MESSAGE_OUT_OF_MEMORY, _T("affinity"), _T("setting_get_affinity"));
     return -1;
   }
 
@@ -427,7 +427,7 @@ static int setting_get_affinity(const TCHAR *service_name, void *param, const TC
 
   __int64 affinity;
   if (affinity_string_to_mask(buffer, &affinity)) {
-    print_message(stderr, NSSM_MESSAGE_BOGUS_AFFINITY_MASK, buffer, num_cpus() - 1);
+    print_message(stderr, BIGSAM_MESSAGE_BOGUS_AFFINITY_MASK, buffer, num_cpus() - 1);
     HeapFree(GetProcessHeap(), 0, buffer);
     return -1;
   }
@@ -490,7 +490,7 @@ static int setting_set_environment(const TCHAR *service_name, void *param, const
   if (! string || ! string[0]) {
     long error = RegDeleteValue(key, name);
     if (error == ERROR_SUCCESS || error == ERROR_FILE_NOT_FOUND) return 0;
-    print_message(stderr, NSSM_MESSAGE_REGDELETEVALUE_FAILED, name, service_name, error_string(error));
+    print_message(stderr, BIGSAM_MESSAGE_REGDELETEVALUE_FAILED, name, service_name, error_string(error));
     return -1;
   }
 
@@ -500,13 +500,13 @@ static int setting_set_environment(const TCHAR *service_name, void *param, const
 
   if (test_environment(unformatted)) {
     HeapFree(GetProcessHeap(), 0, unformatted);
-    print_message(stderr, NSSM_GUI_INVALID_ENVIRONMENT);
+    print_message(stderr, BIGSAM_GUI_INVALID_ENVIRONMENT);
     return -1;
   }
 
   if (RegSetValueEx(key, name, 0, REG_MULTI_SZ, (const unsigned char *) unformatted, (unsigned long) newlen * sizeof(TCHAR)) != ERROR_SUCCESS) {
     if (newlen) HeapFree(GetProcessHeap(), 0, unformatted);
-    log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_SETVALUE_FAILED, NSSM_REG_ENV, error_string(GetLastError()), 0);
+    log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_SETVALUE_FAILED, NSSM_REG_ENV, error_string(GetLastError()), 0);
     return -1;
   }
 
@@ -571,7 +571,7 @@ static int setting_dump_environment(const TCHAR *service_name, void *param, cons
     size_t len = _tcslen(s) + 2;
     value->string = (TCHAR *) HeapAlloc(GetProcessHeap(), 0, len * sizeof(TCHAR));
     if (! value->string) {
-      print_message(stderr, NSSM_MESSAGE_OUT_OF_MEMORY, _T("dump"), _T("setting_dump_environment"));
+      print_message(stderr, BIGSAM_MESSAGE_OUT_OF_MEMORY, _T("dump"), _T("setting_dump_environment"));
       break;
     }
 
@@ -602,7 +602,7 @@ static int setting_set_priority(const TCHAR *service_name, void *param, const TC
   else {
     error = RegDeleteValue(key, name);
     if (error == ERROR_SUCCESS || error == ERROR_FILE_NOT_FOUND) return 0;
-    print_message(stderr, NSSM_MESSAGE_REGDELETEVALUE_FAILED, name, service_name, error_string(error));
+    print_message(stderr, BIGSAM_MESSAGE_REGDELETEVALUE_FAILED, name, service_name, error_string(error));
     return -1;
   }
 
@@ -612,7 +612,7 @@ static int setting_set_priority(const TCHAR *service_name, void *param, const TC
     if (default_value && str_equiv(priority_string, (TCHAR *) default_value)) {
       error = RegDeleteValue(key, name);
       if (error == ERROR_SUCCESS || error == ERROR_FILE_NOT_FOUND) return 0;
-      print_message(stderr, NSSM_MESSAGE_REGDELETEVALUE_FAILED, name, service_name, error_string(error));
+      print_message(stderr, BIGSAM_MESSAGE_REGDELETEVALUE_FAILED, name, service_name, error_string(error));
       return -1;
     }
 
@@ -620,7 +620,7 @@ static int setting_set_priority(const TCHAR *service_name, void *param, const TC
     return 1;
   }
 
-  print_message(stderr, NSSM_MESSAGE_INVALID_PRIORITY, priority_string);
+  print_message(stderr, BIGSAM_MESSAGE_INVALID_PRIORITY, priority_string);
   for (i = 0; priority_strings[i]; i++) _ftprintf(stderr, _T("%s\n"), priority_strings[i]);
 
   return -1;
@@ -708,7 +708,7 @@ static int native_set_dependon(const TCHAR *service_name, SC_HANDLE service_hand
 
         canon = (TCHAR *) HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, canonlen * sizeof(TCHAR));
         if (! canon) {
-          print_message(stderr, NSSM_MESSAGE_OUT_OF_MEMORY, _T("canon"), _T("native_set_dependon"));
+          print_message(stderr, BIGSAM_MESSAGE_OUT_OF_MEMORY, _T("canon"), _T("native_set_dependon"));
           if (unformatted) HeapFree(GetProcessHeap(), 0, unformatted);
           return -1;
         }
@@ -748,7 +748,7 @@ static int native_set_dependongroup(const TCHAR *service_name, void *param, cons
 
   if (! value || ! value->string || ! value->string[0]) {
     if (! ChangeServiceConfig(service_handle, SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, 0, 0, 0, services_buffer, 0, 0, 0)) {
-      print_message(stderr, NSSM_MESSAGE_CHANGESERVICECONFIG_FAILED, error_string(GetLastError()));
+      print_message(stderr, BIGSAM_MESSAGE_CHANGESERVICECONFIG_FAILED, error_string(GetLastError()));
       if (services_buffer) HeapFree(GetProcessHeap(), 0, services_buffer);
       return -1;
     }
@@ -766,7 +766,7 @@ static int native_set_dependongroup(const TCHAR *service_name, void *param, cons
   if (services_buflen > 2) {
     dependencies = (TCHAR *) HeapAlloc(GetProcessHeap(), 0, (groups_buflen + services_buflen) * sizeof(TCHAR));
     if (! dependencies) {
-      print_message(stderr, NSSM_MESSAGE_OUT_OF_MEMORY, _T("dependencies"), _T("native_set_dependongroup"));
+      print_message(stderr, BIGSAM_MESSAGE_OUT_OF_MEMORY, _T("dependencies"), _T("native_set_dependongroup"));
       if (groups_buffer) HeapFree(GetProcessHeap(), 0, groups_buffer);
       if (services_buffer) HeapFree(GetProcessHeap(), 0, services_buffer);
       return -1;
@@ -828,7 +828,7 @@ static int setting_dump_dependon(const TCHAR *service_name, SC_HANDLE service_ha
     size_t len = _tcslen(s) + 2;
     value->string = (TCHAR *) HeapAlloc(GetProcessHeap(), 0, len * sizeof(TCHAR));
     if (! value->string) {
-      print_message(stderr, NSSM_MESSAGE_OUT_OF_MEMORY, _T("dump"), _T("setting_dump_dependon"));
+      print_message(stderr, BIGSAM_MESSAGE_OUT_OF_MEMORY, _T("dump"), _T("setting_dump_dependon"));
       break;
     }
 
@@ -863,7 +863,7 @@ static int native_set_dependonservice(const TCHAR *service_name, void *param, co
 
   if (! value || ! value->string || ! value->string[0]) {
     if (! ChangeServiceConfig(service_handle, SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, 0, 0, 0, groups_buffer, 0, 0, 0)) {
-      print_message(stderr, NSSM_MESSAGE_CHANGESERVICECONFIG_FAILED, error_string(GetLastError()));
+      print_message(stderr, BIGSAM_MESSAGE_CHANGESERVICECONFIG_FAILED, error_string(GetLastError()));
       if (groups_buffer) HeapFree(GetProcessHeap(), 0, groups_buffer);
       return -1;
     }
@@ -881,7 +881,7 @@ static int native_set_dependonservice(const TCHAR *service_name, void *param, co
   if (groups_buflen > 2) {
     dependencies = (TCHAR *) HeapAlloc(GetProcessHeap(), 0, (services_buflen + groups_buflen) * sizeof(TCHAR));
     if (! dependencies) {
-      print_message(stderr, NSSM_MESSAGE_OUT_OF_MEMORY, _T("dependencies"), _T("native_set_dependonservice"));
+      print_message(stderr, BIGSAM_MESSAGE_OUT_OF_MEMORY, _T("dependencies"), _T("native_set_dependonservice"));
       if (groups_buffer) HeapFree(GetProcessHeap(), 0, groups_buffer);
       if (services_buffer) HeapFree(GetProcessHeap(), 0, services_buffer);
       return -1;
@@ -969,7 +969,7 @@ int native_set_displayname(const TCHAR *service_name, void *param, const TCHAR *
   else displayname = (TCHAR *) service_name;
 
   if (! ChangeServiceConfig(service_handle, SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, 0, 0, 0, 0, 0, 0, displayname)) {
-    print_message(stderr, NSSM_MESSAGE_CHANGESERVICECONFIG_FAILED, error_string(GetLastError()));
+    print_message(stderr, BIGSAM_MESSAGE_CHANGESERVICECONFIG_FAILED, error_string(GetLastError()));
     return -1;
   }
 
@@ -1031,12 +1031,12 @@ int native_set_imagepath(const TCHAR *service_name, void *param, const TCHAR *na
 
   /* It makes no sense to try to reset the image path. */
   if (! value || ! value->string) {
-    print_message(stderr, NSSM_MESSAGE_NO_DEFAULT_VALUE, name);
+    print_message(stderr, BIGSAM_MESSAGE_NO_DEFAULT_VALUE, name);
     return -1;
   }
 
   if (! ChangeServiceConfig(service_handle, SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, value->string, 0, 0, 0, 0, 0, 0)) {
-    print_message(stderr, NSSM_MESSAGE_CHANGESERVICECONFIG_FAILED, error_string(GetLastError()));
+    print_message(stderr, BIGSAM_MESSAGE_CHANGESERVICECONFIG_FAILED, error_string(GetLastError()));
     return -1;
   }
 
@@ -1057,7 +1057,7 @@ int native_get_imagepath(const TCHAR *service_name, void *param, const TCHAR *na
 }
 
 int native_set_name(const TCHAR *service_name, void *param, const TCHAR *name, void *default_value, value_t *value, const TCHAR *additional) {
-  print_message(stderr, NSSM_MESSAGE_CANNOT_RENAME_SERVICE);
+  print_message(stderr, BIGSAM_MESSAGE_CANNOT_RENAME_SERVICE);
   return -1;
 }
 
@@ -1093,7 +1093,7 @@ int native_set_objectname(const TCHAR *service_name, void *param, const TCHAR *n
   else if (is_virtual_account(service_name, username)) virtual_account = true;
   else if (! password) {
     /* We need a password if the account requires it. */
-    print_message(stderr, NSSM_MESSAGE_MISSING_PASSWORD, name);
+    print_message(stderr, BIGSAM_MESSAGE_MISSING_PASSWORD, name);
     return -1;
   }
   else passwordsize = _tcslen(password) * sizeof(TCHAR);
@@ -1117,14 +1117,14 @@ int native_set_objectname(const TCHAR *service_name, void *param, const TCHAR *n
   if (! well_known && ! virtual_account) {
     if (grant_logon_as_service(username)) {
       if (passwordsize) SecureZeroMemory(password, passwordsize);
-      print_message(stderr, NSSM_MESSAGE_GRANT_LOGON_AS_SERVICE_FAILED, username);
+      print_message(stderr, BIGSAM_MESSAGE_GRANT_LOGON_AS_SERVICE_FAILED, username);
       return -1;
     }
   }
 
   if (! ChangeServiceConfig(service_handle, type, SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, 0, 0, 0, 0, username, password, 0)) {
     if (passwordsize) SecureZeroMemory(password, passwordsize);
-    print_message(stderr, NSSM_MESSAGE_CHANGESERVICECONFIG_FAILED, error_string(GetLastError()));
+    print_message(stderr, BIGSAM_MESSAGE_CHANGESERVICECONFIG_FAILED, error_string(GetLastError()));
     return -1;
   }
 
@@ -1177,7 +1177,7 @@ int native_set_startup(const TCHAR *service_name, void *param, const TCHAR *name
 
   /* It makes no sense to try to reset the startup type. */
   if (! value || ! value->string) {
-    print_message(stderr, NSSM_MESSAGE_NO_DEFAULT_VALUE, name);
+    print_message(stderr, BIGSAM_MESSAGE_NO_DEFAULT_VALUE, name);
     return -1;
   }
 
@@ -1192,7 +1192,7 @@ int native_set_startup(const TCHAR *service_name, void *param, const TCHAR *name
   }
 
   if (service_startup < 0) {
-    print_message(stderr, NSSM_MESSAGE_INVALID_SERVICE_STARTUP, value->string);
+    print_message(stderr, BIGSAM_MESSAGE_INVALID_SERVICE_STARTUP, value->string);
     for (i = 0; startup_strings[i]; i++) _ftprintf(stderr, _T("%s\n"), startup_strings[i]);
     return -1;
   }
@@ -1205,7 +1205,7 @@ int native_set_startup(const TCHAR *service_name, void *param, const TCHAR *name
   }
 
   if (! ChangeServiceConfig(service_handle, SERVICE_NO_CHANGE, startup, SERVICE_NO_CHANGE, 0, 0, 0, 0, 0, 0, 0)) {
-    print_message(stderr, NSSM_MESSAGE_CHANGESERVICECONFIG_FAILED, error_string(GetLastError()));
+    print_message(stderr, BIGSAM_MESSAGE_CHANGESERVICECONFIG_FAILED, error_string(GetLastError()));
     return -1;
   }
 
@@ -1217,7 +1217,7 @@ int native_set_startup(const TCHAR *service_name, void *param, const TCHAR *name
     unsigned long error = GetLastError();
     /* Pre-Vista we expect to fail with ERROR_INVALID_LEVEL */
     if (error != ERROR_INVALID_LEVEL) {
-      log_event(EVENTLOG_ERROR_TYPE, NSSM_MESSAGE_SERVICE_CONFIG_DELAYED_AUTO_START_INFO_FAILED, service_name, error_string(error), 0);
+      log_event(EVENTLOG_ERROR_TYPE, BIGSAM_MESSAGE_SERVICE_CONFIG_DELAYED_AUTO_START_INFO_FAILED, service_name, error_string(error), 0);
     }
   }
 
@@ -1250,7 +1250,7 @@ int native_set_type(const TCHAR *service_name, void *param, const TCHAR *name, v
 
   /* It makes no sense to try to reset the service type. */
   if (! value || ! value->string) {
-    print_message(stderr, NSSM_MESSAGE_NO_DEFAULT_VALUE, name);
+    print_message(stderr, BIGSAM_MESSAGE_NO_DEFAULT_VALUE, name);
     return -1;
   }
 
@@ -1261,7 +1261,7 @@ int native_set_type(const TCHAR *service_name, void *param, const TCHAR *name, v
   unsigned long type = SERVICE_WIN32_OWN_PROCESS;
   if (str_equiv(value->string, NSSM_INTERACTIVE_PROCESS)) type |= SERVICE_INTERACTIVE_PROCESS;
   else if (! str_equiv(value->string, NSSM_WIN32_OWN_PROCESS)) {
-    print_message(stderr, NSSM_MESSAGE_INVALID_SERVICE_TYPE, value->string);
+    print_message(stderr, BIGSAM_MESSAGE_INVALID_SERVICE_TYPE, value->string);
     _ftprintf(stderr, _T("%s\n"), NSSM_WIN32_OWN_PROCESS);
     _ftprintf(stderr, _T("%s\n"), NSSM_INTERACTIVE_PROCESS);
     return -1;
@@ -1277,7 +1277,7 @@ int native_set_type(const TCHAR *service_name, void *param, const TCHAR *name, v
 
     if (! str_equiv(qsc->lpServiceStartName, NSSM_LOCALSYSTEM_ACCOUNT)) {
       HeapFree(GetProcessHeap(), 0, qsc);
-      print_message(stderr, NSSM_MESSAGE_INTERACTIVE_NOT_LOCALSYSTEM, value->string, service_name, NSSM_LOCALSYSTEM_ACCOUNT);
+      print_message(stderr, BIGSAM_MESSAGE_INTERACTIVE_NOT_LOCALSYSTEM, value->string, service_name, NSSM_LOCALSYSTEM_ACCOUNT);
       return -1;
     }
 
@@ -1285,7 +1285,7 @@ int native_set_type(const TCHAR *service_name, void *param, const TCHAR *name, v
   }
 
   if (! ChangeServiceConfig(service_handle, type, SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, 0, 0, 0, 0, 0, 0, 0)) {
-    print_message(stderr, NSSM_MESSAGE_CHANGESERVICECONFIG_FAILED, error_string(GetLastError()));
+    print_message(stderr, BIGSAM_MESSAGE_CHANGESERVICECONFIG_FAILED, error_string(GetLastError()));
     return -1;
   }
 
@@ -1323,9 +1323,9 @@ int set_setting(const TCHAR *service_name, HKEY key, settings_t *setting, value_
   if (setting->set) ret = setting->set(service_name, (void *) key, setting->name, setting->default_value, value, additional);
   else ret = -1;
 
-  if (! ret) print_message(stdout, NSSM_MESSAGE_RESET_SETTING, setting->name, service_name);
-  else if (ret > 0) print_message(stdout, NSSM_MESSAGE_SET_SETTING, setting->name, service_name);
-  else print_message(stderr, NSSM_MESSAGE_SET_SETTING_FAILED, setting->name, service_name);
+  if (! ret) print_message(stdout, BIGSAM_MESSAGE_RESET_SETTING, setting->name, service_name);
+  else if (ret > 0) print_message(stdout, BIGSAM_MESSAGE_SET_SETTING, setting->name, service_name);
+  else print_message(stderr, BIGSAM_MESSAGE_SET_SETTING_FAILED, setting->name, service_name);
 
   return ret;
 }
@@ -1337,9 +1337,9 @@ int set_setting(const TCHAR *service_name, SC_HANDLE service_handle, settings_t 
   if (setting->set) ret = setting->set(service_name, service_handle, setting->name, setting->default_value, value, additional);
   else ret = -1;
 
-  if (! ret) print_message(stdout, NSSM_MESSAGE_RESET_SETTING, setting->name, service_name);
-  else if (ret > 0) print_message(stdout, NSSM_MESSAGE_SET_SETTING, setting->name, service_name);
-  else print_message(stderr, NSSM_MESSAGE_SET_SETTING_FAILED, setting->name, service_name);
+  if (! ret) print_message(stdout, BIGSAM_MESSAGE_RESET_SETTING, setting->name, service_name);
+  else if (ret > 0) print_message(stdout, BIGSAM_MESSAGE_SET_SETTING, setting->name, service_name);
+  else print_message(stderr, BIGSAM_MESSAGE_SET_SETTING_FAILED, setting->name, service_name);
 
   return ret;
 }
@@ -1365,7 +1365,7 @@ int get_setting(const TCHAR *service_name, HKEY key, settings_t *setting, value_
   }
   else ret = -1;
 
-  if (ret < 0) print_message(stderr, NSSM_MESSAGE_GET_SETTING_FAILED, setting->name, service_name);
+  if (ret < 0) print_message(stderr, BIGSAM_MESSAGE_GET_SETTING_FAILED, setting->name, service_name);
 
   return ret;
 }

@@ -173,8 +173,8 @@ void strip_basename(TCHAR *buffer) {
 
 /* How to use me correctly */
 int usage(int ret) {
-  if ((! GetConsoleWindow() || ! GetStdHandle(STD_OUTPUT_HANDLE)) && GetProcessWindowStation()) popup_message(0, MB_OK, NSSM_MESSAGE_USAGE, NSSM_VERSION, NSSM_CONFIGURATION, NSSM_DATE);
-  else print_message(stderr, NSSM_MESSAGE_USAGE, NSSM_VERSION, NSSM_CONFIGURATION, NSSM_DATE);
+  if ((! GetConsoleWindow() || ! GetStdHandle(STD_OUTPUT_HANDLE)) && GetProcessWindowStation()) popup_message(0, MB_OK, BIGSAM_MESSAGE_USAGE, NSSM_VERSION, BIGSAM_CONFIGURATION, NSSM_DATE);
+  else print_message(stderr, BIGSAM_MESSAGE_USAGE, NSSM_VERSION, BIGSAM_CONFIGURATION, NSSM_DATE);
   return(ret);
 }
 
@@ -200,7 +200,7 @@ static int elevate(int argc, TCHAR **argv, unsigned long message) {
 
   TCHAR *args = (TCHAR *) HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, EXE_LENGTH * sizeof(TCHAR));
   if (! args) {
-    print_message(stderr, NSSM_MESSAGE_OUT_OF_MEMORY, _T("GetCommandLine()"), _T("elevate()"));
+    print_message(stderr, BIGSAM_MESSAGE_OUT_OF_MEMORY, _T("GetCommandLine()"), _T("elevate()"));
     return 111;
   }
 
@@ -263,29 +263,29 @@ int _tmain(int argc, TCHAR **argv) {
       status, statuscode, rotate, list, processes, version
     */
     if (is_version(argv[1])) {
-      _tprintf(_T("%s %s %s %s\n"), NSSM, NSSM_VERSION, NSSM_CONFIGURATION, NSSM_DATE);
+      _tprintf(_T("%s %s %s %s\n"), NSSM, NSSM_VERSION, BIGSAM_CONFIGURATION, NSSM_DATE);
       nssm_exit(0);
     }
-    if (str_equiv(argv[1], _T("start"))) nssm_exit(control_service(NSSM_SERVICE_CONTROL_START, argc - 2, argv + 2));
+    if (str_equiv(argv[1], _T("start"))) nssm_exit(control_service(BIGSAM_SERVICE_CONTROL_START, argc - 2, argv + 2));
     if (str_equiv(argv[1], _T("stop"))) nssm_exit(control_service(SERVICE_CONTROL_STOP, argc - 2, argv + 2));
     if (str_equiv(argv[1], _T("restart"))) {
       int ret = control_service(SERVICE_CONTROL_STOP, argc - 2, argv + 2);
       if (ret) nssm_exit(ret);
-      nssm_exit(control_service(NSSM_SERVICE_CONTROL_START, argc - 2, argv + 2));
+      nssm_exit(control_service(BIGSAM_SERVICE_CONTROL_START, argc - 2, argv + 2));
     }
     if (str_equiv(argv[1], _T("pause"))) nssm_exit(control_service(SERVICE_CONTROL_PAUSE, argc - 2, argv + 2));
     if (str_equiv(argv[1], _T("continue"))) nssm_exit(control_service(SERVICE_CONTROL_CONTINUE, argc - 2, argv + 2));
     if (str_equiv(argv[1], _T("status"))) nssm_exit(control_service(SERVICE_CONTROL_INTERROGATE, argc - 2, argv + 2));
     if (str_equiv(argv[1], _T("statuscode"))) nssm_exit(control_service(SERVICE_CONTROL_INTERROGATE, argc - 2, argv + 2, true));
-    if (str_equiv(argv[1], _T("rotate"))) nssm_exit(control_service(NSSM_SERVICE_CONTROL_ROTATE, argc - 2, argv + 2));
+    if (str_equiv(argv[1], _T("rotate"))) nssm_exit(control_service(BIGSAM_SERVICE_CONTROL_ROTATE, argc - 2, argv + 2));
     if (str_equiv(argv[1], _T("install"))) {
-      if (! is_admin) nssm_exit(elevate(argc, argv, NSSM_MESSAGE_NOT_ADMINISTRATOR_CANNOT_INSTALL));
+      if (! is_admin) nssm_exit(elevate(argc, argv, BIGSAM_MESSAGE_NOT_ADMINISTRATOR_CANNOT_INSTALL));
       create_messages();
       nssm_exit(pre_install_service(argc - 2, argv + 2));
     }
     if (str_equiv(argv[1], _T("edit")) || str_equiv(argv[1], _T("get")) || str_equiv(argv[1], _T("set")) || str_equiv(argv[1], _T("reset")) || str_equiv(argv[1], _T("unset")) || str_equiv(argv[1], _T("dump"))) {
       int ret = pre_edit_service(argc - 1, argv + 1);
-      if (ret == 3 && ! is_admin && argc == 3) nssm_exit(elevate(argc, argv, NSSM_MESSAGE_NOT_ADMINISTRATOR_CANNOT_EDIT));
+      if (ret == 3 && ! is_admin && argc == 3) nssm_exit(elevate(argc, argv, BIGSAM_MESSAGE_NOT_ADMINISTRATOR_CANNOT_EDIT));
       /* There might be a password here. */
       for (int i = 0; i < argc; i++) SecureZeroMemory(argv[i], _tcslen(argv[i]) * sizeof(TCHAR));
       nssm_exit(ret);
@@ -293,7 +293,7 @@ int _tmain(int argc, TCHAR **argv) {
     if (str_equiv(argv[1], _T("list"))) nssm_exit(list_nssm_services(argc - 2, argv + 2));
     if (str_equiv(argv[1], _T("processes"))) nssm_exit(service_process_tree(argc - 2, argv + 2));
     if (str_equiv(argv[1], _T("remove"))) {
-      if (! is_admin) nssm_exit(elevate(argc, argv, NSSM_MESSAGE_NOT_ADMINISTRATOR_CANNOT_REMOVE));
+      if (! is_admin) nssm_exit(elevate(argc, argv, BIGSAM_MESSAGE_NOT_ADMINISTRATOR_CANNOT_REMOVE));
       nssm_exit(pre_remove_service(argc - 2, argv + 2));
     }
   }
@@ -321,7 +321,7 @@ int _tmain(int argc, TCHAR **argv) {
       unsigned long error = GetLastError();
       /* User probably ran nssm with no argument */
       if (error == ERROR_FAILED_SERVICE_CONTROLLER_CONNECT) nssm_exit(usage(1));
-      log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_DISPATCHER_FAILED, error_string(error), 0);
+      log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_DISPATCHER_FAILED, error_string(error), 0);
       nssm_exit(100);
     }
   }

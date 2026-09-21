@@ -10,7 +10,7 @@ static int dup_handle(HANDLE source_handle, HANDLE *dest_handle_ptr, TCHAR *sour
   if (! dest_handle_ptr) return 1;
 
   if (! DuplicateHandle(GetCurrentProcess(), source_handle, GetCurrentProcess(), dest_handle_ptr, 0, true, flags)) {
-    log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_DUPLICATEHANDLE_FAILED, source_description, dest_description, error_string(GetLastError()), 0);
+    log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_DUPLICATEHANDLE_FAILED, source_description, dest_description, error_string(GetLastError()), 0);
     return 2;
   }
   return 0;
@@ -35,7 +35,7 @@ static HANDLE create_logging_thread(TCHAR *service_name, TCHAR *path, unsigned l
         SetHandleInformation(*pipe_handle_ptr, HANDLE_FLAG_INHERIT, HANDLE_FLAG_INHERIT);
       }
       else {
-        log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_CREATEPIPE_FAILED, service_name, path, error_string(GetLastError()));
+        log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_CREATEPIPE_FAILED, service_name, path, error_string(GetLastError()));
         return (HANDLE) 0;
       }
     }
@@ -43,7 +43,7 @@ static HANDLE create_logging_thread(TCHAR *service_name, TCHAR *path, unsigned l
 
   logger_t *logger = (logger_t *) HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(logger_t));
   if (! logger) {
-    log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_OUT_OF_MEMORY, _T("logger"), _T("create_logging_thread()"), 0);
+    log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_OUT_OF_MEMORY, _T("logger"), _T("create_logging_thread()"), 0);
     return (HANDLE) 0;
   }
 
@@ -68,7 +68,7 @@ static HANDLE create_logging_thread(TCHAR *service_name, TCHAR *path, unsigned l
 
   HANDLE thread_handle = CreateThread(NULL, 0, log_and_rotate, (void *) logger, 0, logger->tid_ptr);
   if (! thread_handle) {
-    log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_CREATETHREAD_FAILED, error_string(GetLastError()), 0);
+    log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_CREATETHREAD_FAILED, error_string(GetLastError()), 0);
     HeapFree(GetProcessHeap(), 0, logger);
   }
 
@@ -83,7 +83,7 @@ static inline unsigned long guess_charsize(void *address, unsigned long bufsize)
 static inline void write_bom(logger_t *logger, unsigned long *out) {
   wchar_t bom = L'\ufeff';
   if (! WriteFile(logger->write_handle, (void *) &bom, sizeof(bom), out, 0)) {
-    log_event(EVENTLOG_WARNING_TYPE, NSSM_EVENT_SOMEBODY_SET_UP_US_THE_BOM, logger->service_name, logger->path, error_string(GetLastError()), 0);
+    log_event(EVENTLOG_WARNING_TYPE, BIGSAM_EVENT_SOMEBODY_SET_UP_US_THE_BOM, logger->service_name, logger->path, error_string(GetLastError()), 0);
   }
 }
 
@@ -106,7 +106,7 @@ int get_createfile_parameters(HKEY key, TCHAR *prefix, TCHAR *path, unsigned lon
 
   /* Path. */
   if (_sntprintf_s(value, _countof(value), _TRUNCATE, _T("%s"), prefix) < 0) {
-    log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_OUT_OF_MEMORY, prefix, _T("get_createfile_parameters()"), 0);
+    log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_OUT_OF_MEMORY, prefix, _T("get_createfile_parameters()"), 0);
     return 1;
   }
   switch (expand_parameter(key, value, path, PATH_LENGTH, true, false)) {
@@ -116,7 +116,7 @@ int get_createfile_parameters(HKEY key, TCHAR *prefix, TCHAR *path, unsigned lon
 
   /* ShareMode. */
   if (_sntprintf_s(value, _countof(value), _TRUNCATE, _T("%s%s"), prefix, NSSM_REG_STDIO_SHARING) < 0) {
-    log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_OUT_OF_MEMORY, NSSM_REG_STDIO_SHARING, _T("get_createfile_parameters()"), 0);
+    log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_OUT_OF_MEMORY, NSSM_REG_STDIO_SHARING, _T("get_createfile_parameters()"), 0);
     return 3;
   }
   switch (get_number(key, value, sharing, false)) {
@@ -127,7 +127,7 @@ int get_createfile_parameters(HKEY key, TCHAR *prefix, TCHAR *path, unsigned lon
 
   /* CreationDisposition. */
   if (_sntprintf_s(value, _countof(value), _TRUNCATE, _T("%s%s"), prefix, NSSM_REG_STDIO_DISPOSITION) < 0) {
-    log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_OUT_OF_MEMORY, NSSM_REG_STDIO_DISPOSITION, _T("get_createfile_parameters()"), 0);
+    log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_OUT_OF_MEMORY, NSSM_REG_STDIO_DISPOSITION, _T("get_createfile_parameters()"), 0);
     return 5;
   }
   switch (get_number(key, value, disposition, false)) {
@@ -138,7 +138,7 @@ int get_createfile_parameters(HKEY key, TCHAR *prefix, TCHAR *path, unsigned lon
 
   /* Flags. */
   if (_sntprintf_s(value, _countof(value), _TRUNCATE, _T("%s%s"), prefix, NSSM_REG_STDIO_FLAGS) < 0) {
-    log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_OUT_OF_MEMORY, NSSM_REG_STDIO_FLAGS, _T("get_createfile_parameters()"), 0);
+    log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_OUT_OF_MEMORY, NSSM_REG_STDIO_FLAGS, _T("get_createfile_parameters()"), 0);
     return 7;
   }
   switch (get_number(key, value, flags, false)) {
@@ -151,7 +151,7 @@ int get_createfile_parameters(HKEY key, TCHAR *prefix, TCHAR *path, unsigned lon
   if (copy_and_truncate) {
     unsigned long data;
     if (_sntprintf_s(value, _countof(value), _TRUNCATE, _T("%s%s"), prefix, NSSM_REG_STDIO_COPY_AND_TRUNCATE) < 0) {
-      log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_OUT_OF_MEMORY, NSSM_REG_STDIO_COPY_AND_TRUNCATE, _T("get_createfile_parameters()"), 0);
+      log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_OUT_OF_MEMORY, NSSM_REG_STDIO_COPY_AND_TRUNCATE, _T("get_createfile_parameters()"), 0);
       return 9;
     }
     switch (get_number(key, value, &data, false)) {
@@ -171,7 +171,7 @@ int set_createfile_parameter(HKEY key, TCHAR *prefix, TCHAR *suffix, unsigned lo
   TCHAR value[NSSM_STDIO_LENGTH];
 
   if (_sntprintf_s(value, _countof(value), _TRUNCATE, _T("%s%s"), prefix, suffix) < 0) {
-    log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_OUT_OF_MEMORY, suffix, _T("set_createfile_parameter()"), 0);
+    log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_OUT_OF_MEMORY, suffix, _T("set_createfile_parameter()"), 0);
     return 1;
   }
 
@@ -182,7 +182,7 @@ int delete_createfile_parameter(HKEY key, TCHAR *prefix, TCHAR *suffix) {
   TCHAR value[NSSM_STDIO_LENGTH];
 
   if (_sntprintf_s(value, _countof(value), _TRUNCATE, _T("%s%s"), prefix, suffix) < 0) {
-    log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_OUT_OF_MEMORY, suffix, _T("delete_createfile_parameter()"), 0);
+    log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_OUT_OF_MEMORY, suffix, _T("delete_createfile_parameter()"), 0);
     return 1;
   }
 
@@ -198,7 +198,7 @@ HANDLE write_to_file(TCHAR *path, unsigned long sharing, SECURITY_ATTRIBUTES *at
     return ret;
   }
 
-  log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_CREATEFILE_FAILED, path, error_string(GetLastError()), 0);
+  log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_CREATEFILE_FAILED, path, error_string(GetLastError()), 0);
   return ret;
 }
 
@@ -242,7 +242,7 @@ void rotate_file(TCHAR *service_name, TCHAR *path, unsigned long seconds, unsign
   else {
     error = GetLastError();
     if (error == ERROR_FILE_NOT_FOUND) return;
-    log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_ROTATE_FILE_FAILED, service_name, path, _T("CreateFile()"), path, error_string(error), 0);
+    log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_ROTATE_FILE_FAILED, service_name, path, _T("CreateFile()"), path, error_string(error), 0);
     /* Reuse current time for rotation timestamp. */
     seconds = low = high = 0;
     SystemTimeToFileTime(&st, &info.ftLastWriteTime);
@@ -293,13 +293,13 @@ void rotate_file(TCHAR *service_name, TCHAR *path, unsigned long seconds, unsign
     if (! MoveFile(path, rotated)) ok = false;
   }
   if (ok) {
-    log_event(EVENTLOG_INFORMATION_TYPE, NSSM_EVENT_ROTATED, service_name, path, rotated, 0);
+    log_event(EVENTLOG_INFORMATION_TYPE, BIGSAM_EVENT_ROTATED, service_name, path, rotated, 0);
     return;
   }
   error = GetLastError();
 
   if (error == ERROR_FILE_NOT_FOUND) return;
-  log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_ROTATE_FILE_FAILED, service_name, path, function, rotated, error_string(error), 0);
+  log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_ROTATE_FILE_FAILED, service_name, path, function, rotated, error_string(error), 0);
   return;
 }
 
@@ -314,11 +314,12 @@ int get_output_handles(nssm_service_t *service, STARTUPINFO *si) {
   if (service->stdin_path[0]) {
     si->hStdInput = CreateFile(service->stdin_path, FILE_READ_DATA, service->stdin_sharing, 0, service->stdin_disposition, service->stdin_flags, 0);
     if (si->hStdInput == INVALID_HANDLE_VALUE) {
-      log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_CREATEFILE_FAILED, service->stdin_path, error_string(GetLastError()), 0);
+      log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_CREATEFILE_FAILED, service->stdin_path, error_string(GetLastError()), 0);
       return 2;
     }
 
-    inherit_handles = true;
+    inherit_handles = true;
+
   }
 
   /* stdout */
@@ -345,7 +346,8 @@ int get_output_handles(nssm_service_t *service, STARTUPINFO *si) {
 
     if (dup_handle(service->stdout_si, &si->hStdOutput, _T("stdout_si"), _T("stdout"))) close_handle(&service->stdout_thread);
 
-    inherit_handles = true;
+    inherit_handles = true;
+
   }
 
   /* stderr */
@@ -385,7 +387,8 @@ int get_output_handles(nssm_service_t *service, STARTUPINFO *si) {
 
     if (dup_handle(service->stderr_si, &si->hStdError, _T("stderr_si"), _T("stderr"))) close_handle(&service->stderr_thread);
 
-    inherit_handles = true;
+    inherit_handles = true;
+
   }
 
   /*
@@ -482,7 +485,7 @@ static int try_read(logger_t *logger, void *address, unsigned long bufsize, unsi
 complain_read:
   /* Ignore the error if we've been requested to exit anyway. */
   if (*logger->rotate_online != NSSM_ROTATE_ONLINE) return ret;
-  if (! (*complained & COMPLAINED_READ)) log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_READFILE_FAILED, logger->service_name, logger->path, error_string(error), 0);
+  if (! (*complained & COMPLAINED_READ)) log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_READFILE_FAILED, logger->service_name, logger->path, error_string(error), 0);
   *complained |= COMPLAINED_READ;
   return ret;
 }
@@ -526,7 +529,7 @@ static int try_write(logger_t *logger, void *address, unsigned long bufsize, uns
   }
 
 complain_write:
-  if (! (*complained & COMPLAINED_WRITE)) log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_WRITEFILE_FAILED, logger->service_name, logger->path, error_string(error), 0);
+  if (! (*complained & COMPLAINED_WRITE)) log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_WRITEFILE_FAILED, logger->service_name, logger->path, error_string(error), 0);
   *complained |= COMPLAINED_WRITE;
   return ret;
 }
@@ -679,13 +682,13 @@ unsigned long WINAPI log_and_rotate(void *arg) {
             if (! MoveFile(logger->path, rotated)) ok = false;
           }
           if (ok) {
-            log_event(EVENTLOG_INFORMATION_TYPE, NSSM_EVENT_ROTATED, logger->service_name, logger->path, rotated, 0);
+            log_event(EVENTLOG_INFORMATION_TYPE, BIGSAM_EVENT_ROTATED, logger->service_name, logger->path, rotated, 0);
             size = 0LL;
           }
           else {
             error = GetLastError();
             if (error != ERROR_FILE_NOT_FOUND) {
-              if (! (complained & COMPLAINED_ROTATE)) log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_ROTATE_FILE_FAILED, logger->service_name, logger->path, function, rotated, error_string(error), 0);
+              if (! (complained & COMPLAINED_ROTATE)) log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_ROTATE_FILE_FAILED, logger->service_name, logger->path, function, rotated, error_string(error), 0);
               complained |= COMPLAINED_ROTATE;
               /* We can at least try to re-open the existing file. */
               logger->disposition = OPEN_ALWAYS;
@@ -696,7 +699,7 @@ unsigned long WINAPI log_and_rotate(void *arg) {
           logger->write_handle = write_to_file(logger->path, logger->sharing, 0, logger->disposition, logger->flags);
           if (logger->write_handle == INVALID_HANDLE_VALUE) {
             error = GetLastError();
-            log_event(EVENTLOG_ERROR_TYPE, NSSM_EVENT_CREATEFILE_FAILED, logger->path, error_string(error), 0);
+            log_event(EVENTLOG_ERROR_TYPE, BIGSAM_EVENT_CREATEFILE_FAILED, logger->path, error_string(error), 0);
             /* Oh dear.  Now we can't log anything further. */
             close_handle(&logger->read_handle);
             close_handle(&logger->write_handle);

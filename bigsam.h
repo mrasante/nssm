@@ -1,5 +1,5 @@
-#ifndef NSSM_H
-#define NSSM_H
+#ifndef BIGSAM_H
+#define BIGSAM_H
 
 #ifndef _WIN32
 #error "nssm is a Windows-only project. Build it with a Windows toolchain and Windows SDK."
@@ -44,7 +44,7 @@
 #undef APSTUDIO_HIDDEN_SYMBOLS
 #include <commctrl.h>
 #include <tchar.h>
-#ifndef NSSM_COMPILE_RC
+#ifndef BIGSAM_COMPILE_RC
 #include <fcntl.h>
 #include <io.h>
 #include <shlwapi.h>
@@ -80,87 +80,87 @@ const TCHAR *nssm_exe();
 
 #define NSSM _T("BigSAM")
 #ifdef _WIN64
-#define NSSM_ARCHITECTURE _T("64-bit")
+#define BIGSAM_ARCHITECTURE _T("64-bit")
 #else
-#define NSSM_ARCHITECTURE _T("32-bit")
+#define BIGSAM_ARCHITECTURE _T("32-bit")
 #endif
 #ifdef _DEBUG
-#define NSSM_DEBUG _T(" debug")
+#define BIGSAM_DEBUG _T(" debug")
 #else
-#define NSSM_DEBUG _T("")
+#define BIGSAM_DEBUG _T("")
 #endif
-#define NSSM_CONFIGURATION NSSM_ARCHITECTURE NSSM_DEBUG
+#define BIGSAM_CONFIGURATION BIGSAM_ARCHITECTURE BIGSAM_DEBUG
 #include "version.h"
 
 /*
   Throttle the restart of the service if it stops before this many
   milliseconds have elapsed since startup.  Override in registry.
 */
-#define NSSM_RESET_THROTTLE_RESTART 1500
+#define BIGSAM_RESET_THROTTLE_RESTART 1500
 
 /*
   How many milliseconds to wait for the application to die after sending
   a Control-C event to its console.  Override in registry.
 */
-#define NSSM_KILL_CONSOLE_GRACE_PERIOD 1500
+#define BIGSAM_KILL_CONSOLE_GRACE_PERIOD 1500
 /*
   How many milliseconds to wait for the application to die after posting to
   its windows' message queues.  Override in registry.
 */
-#define NSSM_KILL_WINDOW_GRACE_PERIOD 1500
+#define BIGSAM_KILL_WINDOW_GRACE_PERIOD 1500
 /*
   How many milliseconds to wait for the application to die after posting to
   its threads' message queues.  Override in registry.
 */
-#define NSSM_KILL_THREADS_GRACE_PERIOD 1500
+#define BIGSAM_KILL_THREADS_GRACE_PERIOD 1500
 
 /* How many milliseconds to pause after rotating logs. */
-#define NSSM_ROTATE_DELAY 0
+#define BIGSAM_ROTATE_DELAY 0
 
 /* Margin of error for service status wait hints in milliseconds. */
-#define NSSM_WAITHINT_MARGIN 2000
+#define BIGSAM_WAITHINT_MARGIN 2000
 
 /* Methods used to try to stop the application. */
-#define NSSM_STOP_METHOD_CONSOLE (1 << 0)
-#define NSSM_STOP_METHOD_WINDOW (1 << 1)
-#define NSSM_STOP_METHOD_THREADS (1 << 2)
-#define NSSM_STOP_METHOD_TERMINATE (1 << 3)
+#define BIGSAM_STOP_METHOD_CONSOLE (1 << 0)
+#define BIGSAM_STOP_METHOD_WINDOW (1 << 1)
+#define BIGSAM_STOP_METHOD_THREADS (1 << 2)
+#define BIGSAM_STOP_METHOD_TERMINATE (1 << 3)
 
 /* Startup types. */
-#define NSSM_STARTUP_AUTOMATIC 0
-#define NSSM_STARTUP_DELAYED 1
-#define NSSM_STARTUP_MANUAL 2
-#define NSSM_STARTUP_DISABLED 3
+#define BIGSAM_STARTUP_AUTOMATIC 0
+#define BIGSAM_STARTUP_DELAYED 1
+#define BIGSAM_STARTUP_MANUAL 2
+#define BIGSAM_STARTUP_DISABLED 3
 
 /* Exit actions. */
-#define NSSM_EXIT_RESTART 0
-#define NSSM_EXIT_IGNORE 1
-#define NSSM_EXIT_REALLY 2
-#define NSSM_EXIT_UNCLEAN 3
-#define NSSM_NUM_EXIT_ACTIONS 4
+#define BIGSAM_EXIT_RESTART 0
+#define BIGSAM_EXIT_IGNORE 1
+#define BIGSAM_EXIT_REALLY 2
+#define BIGSAM_EXIT_UNCLEAN 3
+#define BIGSAM_NUM_EXIT_ACTIONS 4
 
 /* Process priority. */
-#define NSSM_REALTIME_PRIORITY 0
-#define NSSM_HIGH_PRIORITY 1
-#define NSSM_ABOVE_NORMAL_PRIORITY 2
-#define NSSM_NORMAL_PRIORITY 3
-#define NSSM_BELOW_NORMAL_PRIORITY 4
-#define NSSM_IDLE_PRIORITY 5
+#define BIGSAM_REALTIME_PRIORITY 0
+#define BIGSAM_HIGH_PRIORITY 1
+#define BIGSAM_ABOVE_NORMAL_PRIORITY 2
+#define BIGSAM_NORMAL_PRIORITY 3
+#define BIGSAM_BELOW_NORMAL_PRIORITY 4
+#define BIGSAM_IDLE_PRIORITY 5
 
 /* How many milliseconds to wait before updating service status. */
-#define NSSM_SERVICE_STATUS_DEADLINE 20000
+#define BIGSAM_SERVICE_STATUS_DEADLINE 20000
 
 /* User-defined service controls can be in the range 128-255. */
-#define NSSM_SERVICE_CONTROL_START 0
-#define NSSM_SERVICE_CONTROL_ROTATE 128
+#define BIGSAM_SERVICE_CONTROL_START 0
+#define BIGSAM_SERVICE_CONTROL_ROTATE 128
 
 /* How many milliseconds to wait for a hook. */
-#define NSSM_HOOK_DEADLINE 60000
+#define BIGSAM_HOOK_DEADLINE 60000
 
 /* How many milliseconds to wait for outstanding hooks. */
-#define NSSM_HOOK_THREAD_DEADLINE 80000
+#define BIGSAM_HOOK_THREAD_DEADLINE 80000
 
 /* How many milliseconds to wait for closing logging thread. */
-#define NSSM_CLEANUP_LOGGERS_DEADLINE 1500
+#define BIGSAM_CLEANUP_LOGGERS_DEADLINE 1500
 
 #endif

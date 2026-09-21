@@ -1,4 +1,6 @@
 #include "nssm.h"
+#include "bigsam.h"
+#include "messages.h"
 
 #include <sddl.h>
 
@@ -15,7 +17,7 @@ int open_lsa_policy(LSA_HANDLE *policy) {
 
   NTSTATUS status = LsaOpenPolicy(0, &attributes, POLICY_ALL_ACCESS, policy);
   if (status != STATUS_SUCCESS) {
-    print_message(stderr, NSSM_MESSAGE_LSAOPENPOLICY_FAILED, error_string(LsaNtStatusToWinError(status)));
+    print_message(stderr, BIGSAM_MESSAGE_LSAOPENPOLICY_FAILED, error_string(LsaNtStatusToWinError(status)));
     return 1;
   }
 
@@ -44,7 +46,7 @@ int username_sid(const TCHAR *username, SID **sid, LSA_HANDLE *policy) {
     expandedlen = (unsigned long) (_tcslen(username) + 1) * sizeof(TCHAR);
     expanded = (TCHAR *) HeapAlloc(GetProcessHeap(), 0, expandedlen);
     if (! expanded) {
-      print_message(stderr, NSSM_MESSAGE_OUT_OF_MEMORY, _T("expanded"), _T("username_sid"));
+      print_message(stderr, BIGSAM_MESSAGE_OUT_OF_MEMORY, _T("expanded"), _T("username_sid"));
       if (policy == &handle) LsaClose(handle);
       return 2;
     }
@@ -58,7 +60,7 @@ int username_sid(const TCHAR *username, SID **sid, LSA_HANDLE *policy) {
 
     expanded = (TCHAR *) HeapAlloc(GetProcessHeap(), 0, expandedlen * sizeof(TCHAR));
     if (! expanded) {
-      print_message(stderr, NSSM_MESSAGE_OUT_OF_MEMORY, _T("expanded"), _T("username_sid"));
+      print_message(stderr, BIGSAM_MESSAGE_OUT_OF_MEMORY, _T("expanded"), _T("username_sid"));
       if (policy == &handle) LsaClose(handle);
       return 2;
     }
@@ -70,7 +72,7 @@ int username_sid(const TCHAR *username, SID **sid, LSA_HANDLE *policy) {
   HeapFree(GetProcessHeap(), 0, expanded);
   if (ret) {
     if (policy == &handle) LsaClose(handle);
-    print_message(stderr, NSSM_MESSAGE_OUT_OF_MEMORY, _T("LSA_UNICODE_STRING"), _T("username_sid()"));
+    print_message(stderr, BIGSAM_MESSAGE_OUT_OF_MEMORY, _T("LSA_UNICODE_STRING"), _T("username_sid()"));
     return 4;
   }
   lsa_username.Length *= sizeof(wchar_t);
@@ -84,7 +86,7 @@ int username_sid(const TCHAR *username, SID **sid, LSA_HANDLE *policy) {
   if (status != STATUS_SUCCESS) {
     LsaFreeMemory(translated_domains);
     LsaFreeMemory(translated_sid);
-    print_message(stderr, NSSM_MESSAGE_LSALOOKUPNAMES_FAILED, username, error_string(LsaNtStatusToWinError(status)));
+    print_message(stderr, BIGSAM_MESSAGE_LSALOOKUPNAMES_FAILED, username, error_string(LsaNtStatusToWinError(status)));
     return 5;
   }
 
@@ -92,7 +94,7 @@ int username_sid(const TCHAR *username, SID **sid, LSA_HANDLE *policy) {
     if (translated_sid->Use != SidTypeUnknown || _tcsnicmp(NSSM_VIRTUAL_SERVICE_ACCOUNT_DOMAIN _T("\\"), username, _tcslen(NSSM_VIRTUAL_SERVICE_ACCOUNT_DOMAIN) + 1)) {
       LsaFreeMemory(translated_domains);
       LsaFreeMemory(translated_sid);
-      print_message(stderr, NSSM_GUI_INVALID_USERNAME, username);
+      print_message(stderr, BIGSAM_GUI_INVALID_USERNAME, username);
       return 6;
     }
   }
@@ -101,7 +103,7 @@ int username_sid(const TCHAR *username, SID **sid, LSA_HANDLE *policy) {
   if (! trust || ! IsValidSid(trust->Sid)) {
     LsaFreeMemory(translated_domains);
     LsaFreeMemory(translated_sid);
-    print_message(stderr, NSSM_GUI_INVALID_USERNAME, username);
+    print_message(stderr, BIGSAM_GUI_INVALID_USERNAME, username);
     return 7;
   }
 
@@ -113,7 +115,7 @@ int username_sid(const TCHAR *username, SID **sid, LSA_HANDLE *policy) {
   if (! *sid) {
     LsaFreeMemory(translated_domains);
     LsaFreeMemory(translated_sid);
-    print_message(stderr, NSSM_MESSAGE_OUT_OF_MEMORY, _T("SID"), _T("username_sid"));
+    print_message(stderr, BIGSAM_MESSAGE_OUT_OF_MEMORY, _T("SID"), _T("username_sid"));
     return 8;
   }
 
@@ -123,7 +125,7 @@ int username_sid(const TCHAR *username, SID **sid, LSA_HANDLE *policy) {
     HeapFree(GetProcessHeap(), 0, *sid);
     LsaFreeMemory(translated_domains);
     LsaFreeMemory(translated_sid);
-    print_message(stderr, NSSM_MESSAGE_INITIALIZESID_FAILED, username, error_string(error));
+    print_message(stderr, BIGSAM_MESSAGE_INITIALIZESID_FAILED, username, error_string(error));
     return 9;
   }
 
@@ -135,7 +137,7 @@ int username_sid(const TCHAR *username, SID **sid, LSA_HANDLE *policy) {
 
   ret = 0;
   if (translated_sid->Use == SidTypeWellKnownGroup && ! well_known_sid(*sid)) {
-    print_message(stderr, NSSM_GUI_INVALID_USERNAME, username);
+    print_message(stderr, BIGSAM_GUI_INVALID_USERNAME, username);
     ret = 10;
   }
 
@@ -163,7 +165,7 @@ int canonicalise_username(const TCHAR *username, TCHAR **canon) {
   if (status != STATUS_SUCCESS) {
     LsaFreeMemory(translated_domains);
     LsaFreeMemory(translated_name);
-    print_message(stderr, NSSM_MESSAGE_LSALOOKUPSIDS_FAILED, error_string(LsaNtStatusToWinError(status)));
+    print_message(stderr, BIGSAM_MESSAGE_LSALOOKUPSIDS_FAILED, error_string(LsaNtStatusToWinError(status)));
     return 3;
   }
 
@@ -175,7 +177,7 @@ int canonicalise_username(const TCHAR *username, TCHAR **canon) {
   if (! lsa_canon.Buffer) {
     LsaFreeMemory(translated_domains);
     LsaFreeMemory(translated_name);
-    print_message(stderr, NSSM_MESSAGE_OUT_OF_MEMORY, _T("lsa_canon"), _T("username_sid"));
+    print_message(stderr, BIGSAM_MESSAGE_OUT_OF_MEMORY, _T("lsa_canon"), _T("username_sid"));
     return 9;
   }
 
@@ -188,7 +190,7 @@ int canonicalise_username(const TCHAR *username, TCHAR **canon) {
   if (from_utf16(lsa_canon.Buffer, canon, &canonlen)) {
     LsaFreeMemory(translated_domains);
     LsaFreeMemory(translated_name);
-    print_message(stderr, NSSM_MESSAGE_OUT_OF_MEMORY, _T("canon"), _T("username_sid"));
+    print_message(stderr, BIGSAM_MESSAGE_OUT_OF_MEMORY, _T("canon"), _T("username_sid"));
     return 10;
   }
   HeapFree(GetProcessHeap(), 0, lsa_canon.Buffer);
@@ -239,7 +241,7 @@ TCHAR *virtual_account(const TCHAR *service_name) {
   size_t len = _tcslen(NSSM_VIRTUAL_SERVICE_ACCOUNT_DOMAIN) + _tcslen(service_name) + 2;
   TCHAR *name = (TCHAR *) HeapAlloc(GetProcessHeap(), 0, len * sizeof(TCHAR));
   if (! name) {
-    print_message(stderr, NSSM_MESSAGE_OUT_OF_MEMORY, _T("name"), _T("virtual_account"));
+    print_message(stderr, BIGSAM_MESSAGE_OUT_OF_MEMORY, _T("name"), _T("virtual_account"));
     return 0;
   }
 
@@ -328,7 +330,7 @@ int grant_logon_as_service(const TCHAR *username) {
     if (error != ERROR_FILE_NOT_FOUND) {
       FreeSid(sid);
       LsaClose(policy);
-      print_message(stderr, NSSM_MESSAGE_LSAENUMERATEACCOUNTRIGHTS_FAILED, username, error_string(error));
+      print_message(stderr, BIGSAM_MESSAGE_LSAENUMERATEACCOUNTRIGHTS_FAILED, username, error_string(error));
       return 4;
     }
   }
@@ -349,10 +351,10 @@ int grant_logon_as_service(const TCHAR *username) {
   FreeSid(sid);
   LsaClose(policy);
   if (status != STATUS_SUCCESS) {
-    print_message(stderr, NSSM_MESSAGE_LSAADDACCOUNTRIGHTS_FAILED, error_string(LsaNtStatusToWinError(status)));
+    print_message(stderr, BIGSAM_MESSAGE_LSAADDACCOUNTRIGHTS_FAILED, error_string(LsaNtStatusToWinError(status)));
     return 5;
   }
 
-  print_message(stdout, NSSM_MESSAGE_GRANTED_LOGON_AS_SERVICE, username);
+  print_message(stdout, BIGSAM_MESSAGE_GRANTED_LOGON_AS_SERVICE, username);
   return 0;
 }
